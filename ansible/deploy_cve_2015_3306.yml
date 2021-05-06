@@ -1,0 +1,57 @@
+- hosts: localhost
+  become: true
+  
+  tasks:
+    - name: Install depedencies
+      apt:
+        pkg:
+          - gcc
+          - make
+          - apache2
+          - php
+        state: present
+        update_cache: yes
+
+    - name: Get ProFTPd v1.3.5 Source Code
+      get_url:
+        url: ftp://ftp.proftpd.org/distrib/source/proftpd-1.3.5.tar.gz
+        dest: /opt/proftpd-1.3.5.tar.gz
+    
+    - name: Untar source code
+      unarchive: 
+        src: /opt/proftpd-1.3.5.tar.gz
+        dest: /opt
+    
+    - name: Configure FTP
+      command: ./configure --with-modules=mod_copy
+      args:
+        chdir: /opt/proftpd-1.3.5/
+
+    - name: Make FTP
+      make:
+        chdir: /opt/proftpd-1.3.5/
+
+    - name: Configure FTP
+      make:
+        chdir: /opt/proftpd-1.3.5/
+        target: install
+    
+    - name: Copy ProFTPd systemd service
+      template:
+        src: proftpd.service
+        dest: /etc/systemd/system/proftpd.service
+    
+    - name: Enable ProFTPd system service
+      systemd:
+        name: proftpd
+        enabled: yes
+      
+    - name: Start ProFTPd system service
+      systemd:
+        name: proftpd
+        state: restarted
+    
+    - name: Download dummy landing page
+      get_url:
+        url: https://raw.githubusercontent.com/rajeevravindran/Attack-Defense-Exercise/master/index.html
+        dest: /var/www/html/index.html
