@@ -55,3 +55,8 @@
       get_url:
         url: https://raw.githubusercontent.com/rajeevravindran/Attack-Defense-Exercise/master/index.html
         dest: /var/www/html/index.html
+    
+    - name: Set permissions to allow backdoor copy
+      file:
+        dest: /var/www/html
+        mode: '777'
