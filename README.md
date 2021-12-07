@@ -1,1 +1,2 @@
-Attack Defense Exercise
+# OSSEC HIDS with ELK Visualization
+![Diagram](images/Monitoring.png)
